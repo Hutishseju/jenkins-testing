@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Define Node.js version
-        NODE_VERSION = '14.x'
+        NODE_VERSION = '19.9.0'
     }
 
     stages {
