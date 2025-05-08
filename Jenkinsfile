@@ -1,23 +1,45 @@
 pipeline {
     agent any
 
+    environment {
+        // Define Node.js version
+        NODE_VERSION = '14.x'
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
-                // Use the correct branch for cloning
+                // Clone the repository with the correct branch
                 git url: 'https://github.com/Hutishseju/jenkins-testing.git', branch: 'main'
             }
         }
 
-        stage('List Files') {
+        stage('Install Dependencies') {
             steps {
-                sh 'ls -l'
+                script {
+                    // Install Node.js (using NodeSource for the specified version)
+                    sh 'curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | sudo -E bash -'
+                    sh 'sudo apt-get install -y nodejs'
+
+                    // Install npm dependencies
+                    sh 'npm install'
+                }
             }
         }
 
-        stage('Display HTML') {
+        stage('Run Application') {
             steps {
-                sh 'cat index.html'
+                // Run the Node.js application
+                script {
+                    sh 'node server.js &'
+                }
+            }
+        }
+
+        stage('Verify Application') {
+            steps {
+                // Verify if the app is running by curling the localhost
+                sh 'curl http://localhost:3000'
             }
         }
     }
